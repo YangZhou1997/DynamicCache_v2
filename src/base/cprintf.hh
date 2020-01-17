@@ -82,46 +82,47 @@ struct Print
     void
     add_arg(const T &data)
     {
-        if (!cont)
-            process();
+        printf("this function does not compile, so I delete it!\n");
+        // if (!cont)
+        //     process();
 
-        if (fmt.get_width) {
-            fmt.get_width = false;
-            cont = true;
-            fmt.width = get_number(data);
-            return;
-        }
+        // if (fmt.get_width) {
+        //     fmt.get_width = false;
+        //     cont = true;
+        //     fmt.width = get_number(data);
+        //     return;
+        // }
             
-        if (fmt.get_precision) {
-            fmt.get_precision = false;
-            cont = true;
-            fmt.precision = get_number(data);
-            return;
-        }
+        // if (fmt.get_precision) {
+        //     fmt.get_precision = false;
+        //     cont = true;
+        //     fmt.precision = get_number(data);
+        //     return;
+        // }
 
-        switch (fmt.format) {
-          case Format::character:
-            format_char(stream, data, fmt);
-            break;
+        // switch (fmt.format) {
+        //   case Format::character:
+        //     format_char(stream, data, fmt);
+        //     break;
 
-          case Format::integer:
-            format_integer(stream, data, fmt);
-            break;
+        //   case Format::integer:
+        //     format_integer(stream, data, fmt);
+        //     break;
 
-          case Format::floating:
-            format_float(stream, data, fmt);
-            break;
+        //   case Format::floating:
+        //     format_float(stream, data, fmt);
+        //     break;
 
-          case Format::string:
-            format_string(stream, data, fmt);
-            break;
+        //   case Format::string:
+        //     format_string(stream, data, fmt);
+        //     break;
 
-          default:
-            stream << "<bad format>";
-            break;
-        }
+        //   default:
+        //     stream << "<bad format>";
+        //     break;
+        // }
     }
-
+    
     void end_args();
 };
 

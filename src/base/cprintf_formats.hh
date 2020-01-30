@@ -31,6 +31,8 @@
 #ifndef __BASE_CPRINTF_FORMATS_HH__
 #define __BASE_CPRINTF_FORMATS_HH__
 
+// #define _GLIBCXX_USE_CXX11_ABI 0
+
 #include <cstring>
 #include <ostream>
 #include <sstream>
@@ -65,7 +67,6 @@ struct Format
         uppercase = false;
         base = dec;
         format = none;
-        float_format = best;
         precision = -1;
         width = 0;
         get_precision = false;
@@ -82,13 +83,18 @@ _format_char(std::ostream &out, const T &data, Format &fmt)
     out << data;
 }
 
+// std::basic_ostream<char>& operator << (std::basic_ostream<char>& os, const std::basic_stringstream<char>& ss)
+// {
+//     os << ss.str();
+//     return os;
+// }
+// error: no match for 'operator<<' (operand types are 'std::ostream {aka std::basic_ostream<char>}' and 'const std::__cxx11::basic_stringstream<char>')
+
 template <typename T>
 inline void
 _format_integer(std::ostream &out, const T &data, Format &fmt)
 {
     using namespace std;
-
-    ios::fmtflags flags(out.flags());
 
     switch (fmt.base) {
       case Format::hex:
@@ -139,8 +145,62 @@ _format_integer(std::ostream &out, const T &data, Format &fmt)
         out.setf(std::ios::uppercase);
 
     out << data;
+}
 
-    out.flags(flags);
+inline void
+_format_integer(std::ostream &out, const std::__cxx11::basic_stringstream<char> &data, Format &fmt)
+{
+    using namespace std;
+
+    switch (fmt.base) {
+      case Format::hex:
+        out.setf(std::ios::hex, std::ios::basefield);
+        break;
+
+      case Format::oct:
+        out.setf(std::ios::oct, std::ios::basefield);
+        break;
+
+      case Format::dec:
+        out.setf(std::ios::dec, std::ios::basefield);
+        break;
+    }
+
+    if (fmt.alternate_form) {
+        if (!fmt.fill_zero)
+            out.setf(std::ios::showbase);
+        else {
+            switch (fmt.base) {
+              case Format::hex:
+                out << "0x";
+                fmt.width -= 2;
+                break;
+              case Format::oct:
+                out << "0";
+                fmt.width -= 1;
+                break;
+              case Format::dec:
+                break;
+            }
+        }
+    }
+
+    if (fmt.fill_zero)
+        out.fill('0');
+
+    if (fmt.width > 0)
+        out.width(fmt.width);
+
+    if (fmt.flush_left && !fmt.fill_zero)
+        out.setf(std::ios::left);
+
+    if (fmt.print_sign)
+        out.setf(std::ios::showpos);
+
+    if (fmt.uppercase)
+        out.setf(std::ios::uppercase);
+
+    out << data.str();
 }
 
 template <typename T>
@@ -148,11 +208,6 @@ inline void
 _format_float(std::ostream &out, const T &data, Format &fmt)
 {
     using namespace std;
-
-    ios::fmtflags flags(out.flags());
-
-    if (fmt.fill_zero)
-        out.fill('0');
 
     switch (fmt.float_format) {
       case Format::scientific:
@@ -198,8 +253,6 @@ _format_float(std::ostream &out, const T &data, Format &fmt)
     }
 
     out << data;
-
-    out.flags(flags);
 }
 
 template <typename T>
@@ -318,9 +371,32 @@ format_integer(std::ostream &out, const unsigned char *data, Format &fmt)
 inline void
 format_integer(std::ostream &out, const signed char *data, Format &fmt)
 { _format_integer(out, (uintptr_t)data, fmt); }
-// inline void
-// format_integer(std::ostream &out, std::__cxx11::basic_stringstream<char> data, Format &fmt)
-// { _format_integer(out, data.str(), fmt); }
+#if 0
+inline void
+format_integer(std::ostream &out, short data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, unsigned short data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, int data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, unsigned int data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, long data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, unsigned long data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, long long data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+inline void
+format_integer(std::ostream &out, unsigned long long data, Format &fmt)
+{ _format_integer(out, data, fmt); }
+#endif
 
 //
 // floating point formats
@@ -345,6 +421,10 @@ template <typename T>
 inline void
 format_string(std::ostream &out, const T &data, Format &fmt)
 { _format_string(out, data, fmt); }
+
+inline void
+format_string(std::ostream &out, const std::stringstream &data, Format &fmt)
+{ _format_string(out, data.str(), fmt); }
 
 } // namespace cp
 

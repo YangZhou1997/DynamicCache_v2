@@ -258,7 +258,7 @@ def repeatSwitch(testsys, repeat_switch_cpu_list, maxtick, switch_freq):
 def run(options, root, testsys, cpu_class):
     run(options, root, testsysm, cpu_class, 2)
 
-def run(options, root, testsys, cpu_class, numpids):
+def run(options, root, testsys, cpu_class, numpids=2):
     if options.maxtick:
         maxtick = options.maxtick
     elif options.maxtime:

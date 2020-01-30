@@ -185,7 +185,10 @@ if not os.path.exists(stdout_dir):
 if not os.path.exists(stderr_dir):
     os.makedirs(stderr_dir)
 
-folder = sys.argv[1]
+if len(sys.argv) == 2:
+    folder = sys.argv[1]
+else:
+    folder = 'test'
 
 if not os.path.exists("m5out/" + folder):
     os.makedirs("m5out/" + folder)
@@ -202,7 +205,7 @@ if not os.path.exists("stderr/" + folder):
 def singleprog():
     for i in range(len(specint)):
         p0 = specint[i]
-        script = open(scriptgen_dir + "/run_" + p0, "w")
+        script = open(scriptgen_dir + "/run_" + p0 + ".sh", "w")
         command = "#!/bin/bash\n"
         command += "build/ARM/gem5.fast \\\n"
         command += "    --remote-gdb-port=0 \\\n"
@@ -221,10 +224,10 @@ def singleprog():
         command += "    --p0='" + specintinvoke[p0] + "'\\\n"
         command += "    > " + results_dir + "/" + folder + "/stdout_" + p0 + ".out"
     
-        script.write("%s\n" % command)
+        script.write("%s" % command)
         script.close()
         
-        os.system("qsub -cwd -e stderr/" + folder + "/ -o stdout/" + folder + "/ " + scriptgen_dir + "/run_" + p0)
+        # os.system("qsub -cwd -e stderr/" + folder + "/ -o stdout/" + folder + "/ " + scriptgen_dir + "/run_" + p0)
         
 def multiprogs():
     for i in range(len(specint)):
@@ -772,7 +775,7 @@ def dumb_flush():
                     os.system("qsub -cwd -e stderr/" + folder + "/ -o stdout/" + folder + "/ " + 
                     scriptgen_dir + "/run_" + filename)
 # Main
-# singleprog()
+singleprog()
 # miss_curve()
 # nopar_cache()
 # static_cache()

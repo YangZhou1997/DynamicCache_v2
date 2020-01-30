@@ -28,6 +28,8 @@
  * Authors: Nathan Binkert
  */
 
+// #define _GLIBCXX_USE_CXX11_ABI 0
+
 #if defined(__APPLE__)
 #define _GLIBCPP_USE_C99 1
 #endif

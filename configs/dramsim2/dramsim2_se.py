@@ -109,7 +109,7 @@ if args:
     sys.exit(1)
 
 # Number of CPUs
-options.num_cpus = options.numpids
+# options.num_cpus = options.numpids
 
 ######################################################################
 # Add DRAMSim2 into the system
